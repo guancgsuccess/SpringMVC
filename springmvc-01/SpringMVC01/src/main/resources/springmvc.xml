@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	<!-- 加载配置文件 -->
+	<context:property-placeholder location="classpath:config.properties"/>
+	
+	<!-- 数据源,使用dbcp -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${driver}"></property>
+		<property name="url" value="${url}"></property>
+		<property name="username" value="${user}"></property>
+		<property name="password" value="${password}"></property>
+		
+		<property name="initialSize" value="${initialSize}"></property>
+		<property name="maxActive" value="${maxActive}"></property>
+	</bean>
+	<!-- 配置sqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 加载mybatis的配置文件 -->
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+		<!-- 数据源 -->
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- Mapper的批量扫描,从mpper包中扫描mapper接口,自动创建代理对象并且在spring容器中注入
+	     自动扫描出来的mapper的bean的id为mapper类名[首字母小写]
+	 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 指定扫描的包名 
+			如果扫描多个包,使用半角逗号隔开.
+		-->
+		<property name="basePackage" value="com.mybatis.mapper"></property>
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 配置Handler,采用的是第一种处理器适配器,实现Controller接口的方式 -->
+	<bean name="/queryItems.action" id="itemController1" class="com.mybatis.controller.ItemsController"></bean>
+	
+	<!-- 配置Handler,采用的是第二种处理器适配器,实现HttpRequestHandler接口的方式 -->
+	<bean id="itemController2" class="com.mybatis.controller.ItemsController2"></bean>
+	
+	<!-- 处理器映射器
+	                将bean的name作为url进行查找.需要在配置handler的指定beanName(就是url)
+	 -->
+	<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"></bean>
+	
+	<!-- 
+		所有的映射器都实现了HandlerMapping接口
+		处理映射器的另一种方式:可以出现多个映射器
+		前端控制器判断url能让那个映射器处理就让哪个映射器进行处理.
+		简单url映射
+	 -->
+	 <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+	 	<property name="mappings">
+	 		<props>
+	 		<!--	对itemsController进行url映射,url是/queryItem2.action -->
+	 			<prop key="/queryItems2.action">itemController1</prop>
+	 			<!--可以出现多个url指向同一个handler-->
+	 			<prop key="/queryItems3.action">itemController1</prop>
+	 			<prop key="/queryItemController2.action">itemController2</prop>
+	 		</props>
+	 	</property>
+	 </bean>
+	
+	<!--
+		注意:当我们不配置任何适配器的时候,也是可以运行的
+		原因是前端控制器会从DispatcherServlet.properties中
+		加载处理器映射器,适配器,视图解析器,就会默认采用这些组件进行加载
+	-->
+
+	<!-- 处理器适配器
+		 所有的处理器适配器都实现了HandlerAdapter接口
+		 通过查看源码,可以发现该适配器可以处理实现了Controller接口的handler
+	 -->
+	<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"></bean>
+
+	<!-- 另一个处理器适配器
+	                要求所有的handler实现HttpRequestHandler接口
+	-->
+	<bean class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter"></bean>
+	
+	<!-- 视图解析器 
+		 解析jsp的视图解析器
+		默认使用jstl标签,classpath下得有jstl包
+	-->
+	<!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"></bean>-->
+
+	<!--可以为视图解析器配置前缀和后缀-->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+			<property name="prefix" value="/WEB-INF/jsp/"/>
+			<property name="suffix" value=".jsp"/>
+	</bean>
+
+	<!--
+		对应注解的handler可以单独配置,
+		实际开发中建议使用组件扫描
+	-->
+	<context:component-scan base-package="com.mybatis"></context:component-scan>
+
+	<!--注解的映射器,spring3.1以后使用-->
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"></bean>
+	<!--注解的适配器,spring3.1以后使用-->
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter"></bean>
+	<!--使用mvc的注解驱动可以代替以上俩个注解映射器和注解适配器的配置
+	   默认加载了很多的参数绑定方法,比如json转换解析器默认就加载了..
+	   实际开发时使用...
+	-->
+	<!--<mvc:annotation-driven></mvc:annotation-driven>-->
+</beans>

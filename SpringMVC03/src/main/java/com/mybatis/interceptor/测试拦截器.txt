@@ -1,0 +1,36 @@
+测试需求:
+    1.10.3.3两个拦截器都放行
+    HandlerInterceptor1...preHandle
+    HandlerInterceptor2...preHandle
+    HandlerInterceptor2...postHandle
+    HandlerInterceptor1...postHandle
+    HandlerInterceptor2...afterCompletion
+    HandlerInterceptor1...afterCompletion
+
+    总结：
+    preHandle方法按顺序执行，
+    postHandle和afterCompletion按拦截器配置的逆向顺序执行。
+
+    10.3.4拦截器1放行，拦截器2不放行
+    HandlerInterceptor1...preHandle
+    HandlerInterceptor2...preHandle
+    HandlerInterceptor1...afterCompletion
+
+    总结：
+    拦截器1放行，拦截器2 preHandle才会执行。
+    拦截器2 preHandle不放行，拦截器2 postHandle和afterCompletion不会执行。
+    只要有一个拦截器不放行，postHandle不会执行。
+
+    10.3.1拦截器1不放行，拦截器2不放行
+    HandlerInterceptor1...preHandle
+
+    总结:
+    拦截器1 preHandle不放行，postHandle和afterCompletion不会执行。
+    拦截器1 preHandle不放行，拦截器2不执行。
+
+    小结:
+    根据测试结果，对拦截器应用。
+
+    比如：统一日志处理拦截器，需要该 拦截器preHandle一定要放行，且将它放在拦截器链接中第一个位置。
+
+    比如：登陆认证拦截器，放在拦截器链接中第一个位置。权限校验拦截器，放在登陆认证拦截器之后。（因为登陆通过后才校验权限）

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mybatis.mapper.MybatisOrderdetailMapper" >
+  <resultMap id="BaseResultMap" type="com.mybatis.pojo.MybatisOrderdetail" >
+    <id column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="ORDERS_ID" property="ordersId" jdbcType="DECIMAL" />
+    <result column="ITEMS_ID" property="itemsId" jdbcType="DECIMAL" />
+    <result column="ITEMS_NUM" property="itemsNum" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ID, ORDERS_ID, ITEMS_ID, ITEMS_NUM
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.mybatis.pojo.MybatisOrderdetailExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from MYBATIS_ORDERDETAIL
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from MYBATIS_ORDERDETAIL
+    where ID = #{id,jdbcType=DECIMAL}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from MYBATIS_ORDERDETAIL
+    where ID = #{id,jdbcType=DECIMAL}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.mybatis.pojo.MybatisOrderdetailExample" >
+    delete from MYBATIS_ORDERDETAIL
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.mybatis.pojo.MybatisOrderdetail" >
+    insert into MYBATIS_ORDERDETAIL (ID, ORDERS_ID, ITEMS_ID, 
+      ITEMS_NUM)
+    values (#{id,jdbcType=DECIMAL}, #{ordersId,jdbcType=DECIMAL}, #{itemsId,jdbcType=DECIMAL}, 
+      #{itemsNum,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mybatis.pojo.MybatisOrderdetail" >
+    insert into MYBATIS_ORDERDETAIL
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="ordersId != null" >
+        ORDERS_ID,
+      </if>
+      <if test="itemsId != null" >
+        ITEMS_ID,
+      </if>
+      <if test="itemsNum != null" >
+        ITEMS_NUM,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="ordersId != null" >
+        #{ordersId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemsId != null" >
+        #{itemsId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemsNum != null" >
+        #{itemsNum,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.mybatis.pojo.MybatisOrderdetailExample" resultType="java.lang.Integer" >
+    select count(*) from MYBATIS_ORDERDETAIL
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update MYBATIS_ORDERDETAIL
+    <set >
+      <if test="record.id != null" >
+        ID = #{record.id,jdbcType=DECIMAL},
+      </if>
+      <if test="record.ordersId != null" >
+        ORDERS_ID = #{record.ordersId,jdbcType=DECIMAL},
+      </if>
+      <if test="record.itemsId != null" >
+        ITEMS_ID = #{record.itemsId,jdbcType=DECIMAL},
+      </if>
+      <if test="record.itemsNum != null" >
+        ITEMS_NUM = #{record.itemsNum,jdbcType=DECIMAL},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update MYBATIS_ORDERDETAIL
+    set ID = #{record.id,jdbcType=DECIMAL},
+      ORDERS_ID = #{record.ordersId,jdbcType=DECIMAL},
+      ITEMS_ID = #{record.itemsId,jdbcType=DECIMAL},
+      ITEMS_NUM = #{record.itemsNum,jdbcType=DECIMAL}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mybatis.pojo.MybatisOrderdetail" >
+    update MYBATIS_ORDERDETAIL
+    <set >
+      <if test="ordersId != null" >
+        ORDERS_ID = #{ordersId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemsId != null" >
+        ITEMS_ID = #{itemsId,jdbcType=DECIMAL},
+      </if>
+      <if test="itemsNum != null" >
+        ITEMS_NUM = #{itemsNum,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mybatis.pojo.MybatisOrderdetail" >
+    update MYBATIS_ORDERDETAIL
+    set ORDERS_ID = #{ordersId,jdbcType=DECIMAL},
+      ITEMS_ID = #{itemsId,jdbcType=DECIMAL},
+      ITEMS_NUM = #{itemsNum,jdbcType=DECIMAL}
+    where ID = #{id,jdbcType=DECIMAL}
+  </update>
+</mapper>
